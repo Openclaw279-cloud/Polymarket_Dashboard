@@ -1,0 +1,124 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Polymarket BTC Quant Bot Leaderboard</title>
+<style>
+body {
+background: #181d23;
+color: #f1f1f5;
+font-family: 'Segoe UI', Arial, sans-serif;
+margin: 0;
+padding: 24px;
+}
+h1 {
+color: #36d39a;
+letter-spacing: 0.05em;
+margin-bottom: 0.2em;
+}
+.dashboard {
+max-width: 1050px;
+margin: 0 auto;
+background: #1d2227;
+border-radius: 18px;
+padding: 24px 32px 32px 32px;
+box-shadow: 0 6px 24px #0007;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 0 0 32px 0;
+background: #232931;
+border-radius: 11px;
+overflow: hidden;
+font-size: 1em;
+}
+th, td {
+padding: 12px 10px;
+text-align: left;
+}
+th {
+background: #232931;
+color: #43ffb0;
+border-bottom: 3px solid #36d39a44;
+font-weight: 600;
+}
+tr {
+border-bottom: 1px solid #273041;
+}
+tr:last-child {
+border-bottom: none;
+}
+.pos { color: #71ff76; font-weight: 600; }
+.neg { color: #ff495c; font-weight: 600; }
+.neutral { color: #fcd664; font-weight: 600; }
+.bot-header { font-size: 1.15em; font-weight: bold; color: #57e4fa; margin-top: 18px; }
+.log { background: #232931; font-size: 0.98em; border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; line-height: 1.4; }
+@media (max-width: 700px) {
+.dashboard { padding: 10px; }
+table, thead, tbody, th, td, tr { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="dashboard">
+<h1>Polymarket BTC Quant Bot Leaderboard</h1>
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Bot Name</th>
+<th>Strategy</th>
+<th>$ Bankroll</th>
+<th>% P&L</th>
+<th>Trades</th>
+<th>Wins</th>
+<th>Losses</th>
+<th>Win Rate</th>
+<th>Last Action</th>
+</tr>
+</thead>
+<tbody id="botTable">
+</tbody>
+</table>
+
+<div id="botLogs"></div>
+</div>
+<script>
+// Sample leaderboard data, update as needed
+const bots = [
+{ rank: 1, name: "Trend Follower", strategy: 'Multi-timeframe trend', bankroll: 1322, pnl: 32, trades: 10, wins: 8, losses: 2, winRate: '80%', last: 'Rode late BTC surge', log: 'Improved volatility filter after winning streak.' },
+{ rank: 2, name: "Volatility Breakout", strategy: 'Short-term vol', bankroll: 1214, pnl: 21.4, trades: 13, wins: 8, losses: 5, winRate: '61%', last: 'Nailed intraday burst', log: 'Sharpened chop detection after whipsaws.' },
+{ rank: 3, name: "Whale Watcher (Vague SD)", strategy: 'Copy Trader', bankroll: 1163, pnl: 16.3, trades: 12, wins: 7, losses: 5, winRate: '58%', last: 'Copied high-stakes win', log: 'Adaptive sizing on large copied trades.' },
+{ rank: 4, name: "Copy Trader (museum bees)", strategy: 'Copy Trader', bankroll: 1104, pnl: 10.4, trades: 12, wins: 7, losses: 5, winRate: '58%', last: 'Instant copy scalp win', log: 'Just-in-time trade mirroring.' },
+{ rank: 5, name: "Arbitrage Maker", strategy: 'Market inefficiency', bankroll: 1081, pnl: 8.1, trades: 15, wins: 9, losses: 6, winRate: '60%', last: 'Odds inefficiency exposed', log: 'Improved spread scanning routine.' },
+{ rank: 6, name: "Contrarian AI", strategy: 'Aggressive crowdfade', bankroll: 1024, pnl: 2.4, trades: 11, wins: 6, losses: 5, winRate: '55%', last: 'Side-stepped panic', log: 'Circuit breaker saved capital.' },
+{ rank: 7, name: "Mean Reversion Bot", strategy: 'Odds reversion', bankroll: 990, pnl: -1.0, trades: 14, wins: 7, losses: 7, winRate: '50%', last: 'Faded move, stopped out', log: 'Adjusted mean window for volatility.' },
+{ rank: 8, name: "Instant 15-Minute Bot", strategy: 'Immediate short-term', bankroll: 947, pnl: -5.3, trades: 5, wins: 2, losses: 3, winRate: '40%', last: 'Quick short win', log: 'Switched timeframe after drawdown.' },
+{ rank: 9, name: "Kelly Criterion Bot", strategy: 'Dynamic sizing', bankroll: 939, pnl: -6.1, trades: 9, wins: 4, losses: 5, winRate: '44%', last: 'High-risk sizing backfired', log: 'Scaled risk after losing sequence.' },
+{ rank: 10, name: "Sentiment Aggregator", strategy: 'Market mood tracker', bankroll: 905, pnl: -9.5, trades: 4, wins: 1, losses: 3, winRate: '25%', last: 'News fade loss', log: 'Added news filter for signal strength.' },
+// ...add remaining bots—copy/paste these lines to get to 30!
+];
+while (bots.length < 30) {
+bots.push({
+rank: bots.length + 1,
+name: 'Bot #' + (bots.length + 1),
+strategy: 'Experimental',
+bankroll: 1000 + Math.floor((Math.random()-0.5)*200),
+pnl: Number((Math.random()*40-20).toFixed(1)),
+trades: Math.floor(Math.random()*15),
+wins: Math.floor(Math.random()*9),
+losses: Math.floor(Math.random()*9),
+winRate: Math.floor(Math.random()*100) + '%',
+last: 'Monitoring BTC markets...',
+log: 'Refining parameters...'
+});
+}
+bots.sort((a, b) => b.pnl - a.pnl);
+bots.forEach((bot, i) => bot.rank = i+1);
+const row = b => `<tr><td>${b.rank}</td><td>${b.name}</td><td>${b.strategy}</td><td>${b.bankroll}</td><td class="${b.pnl > 5 ? 'pos' : b.pnl < -5 ? 'neg' : 'neutral'}">${b.pnl > 0 ? '+' : ''}${b.pnl}%</td><td>${b.trades}</td><td>${b.wins}</td><td>${b.losses}</td><td>${b.winRate}</td><td>${b.last}</td></tr>`;
+document.getElementById('botTable').innerHTML = bots.map(row).join('');
+document.getElementById('botLogs').innerHTML = '<div class="bot-header">Bot Highlights & Lessons</div>' +
+bots.slice(0, 10).map(b => `<div class='log'><b>${b.name}:</b> ${b.log}</div>`).join('');
+</script>
+</body>
